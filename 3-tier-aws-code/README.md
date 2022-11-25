@@ -20,6 +20,7 @@ I will be using these AWS service components to design and build a three-tier cl
 
 
 #### How I approached it 
+##### Setting up the Network
 1. **Create the VPC** (name and CIDR block of 10.0.0.0/16)
 ```ruby
 Navigate to VPC → Create VPC →VPC Settings → Resources to create → VPC only (include a name), IPV4 CIDR block → 10.0.0.0/16 → Create VPC
@@ -60,7 +61,26 @@ IPv4 CIDR block: 10.0.160.0/20
 Create Internet Gateway (include a name) → Attach it to the VPC → Select the gateway, click on the arrow next to Actions, and choose Attach to VPC
 ```
 
-4. **Create the NAT Gateway** 
+4. **Create the NAT Gateway** (to allow private subnets to connect to the internet)
 ```ruby
+- Create NAT gateway → Provide a name (optional), specify a public subnet and select Public for Connectivity type.
 
+- Select “Allocate Elastic IP” to generate an IP address that will serve as a replacement for the source IP of the instances and translate addresses back to the source IPs.
+```
+
+5. **Create Route tables** (public and private)
+```ruby
+- Create two route tables (public and private)
+- Add name and attach VPC 
+
+- Add routes to the two route tables to allow them to communicate inside or outside the VPC 
+-- For the public route table, add your CIDR route (10.0.0.0/16) and target local. 
+Also add a route and enter the Destination (0.0.0.0/0) and select Internet Gateway
+-- For the private route table, add a route and enter the Destination (0.0.0.0/0) and select NAT Gateway
+
+
+- Associate the  subnets with the route tables in order to allow them to communicate via the route table. 
+-- In the public route table, select Subnet Associations, select Edit subnet associations, select the 2 public subnets you created and select Save changes.
+
+-- In the private route table, select Subnet Associations, select Edit subnet associations, select the 2 private subnets you created and select Save changes.
 ```
