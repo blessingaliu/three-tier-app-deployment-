@@ -4,3 +4,10 @@
 2. Then deploy using Terraform 
 3. Then deploy Terraform using a CI/CD pipeline 
 
+### Prerequisites 
+- IDE (VScode)
+- GitHub account 
+- Git 
+- AWS Account 
+- Terraform
+- Terraform Cloud account
