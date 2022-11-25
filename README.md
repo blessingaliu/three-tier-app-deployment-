@@ -1,4 +1,4 @@
-# Deploying a three-tier application architecture using Terraform with CI/CD Pipeline
+## Deploying a three-tier application architecture using Terraform with CI/CD Pipeline
 
 1. Create manually in AWS first 
 2. Then deploy using Terraform 
