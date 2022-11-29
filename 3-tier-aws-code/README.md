@@ -84,3 +84,91 @@ Also add a route and enter the Destination (0.0.0.0/0) and select Internet Gatew
 
 -- In the private route table, select Subnet Associations, select Edit subnet associations, select the 2 private subnets you created and select Save changes.
 ```
+
+
+##### Creating EC2 Instances for presentation and application tier 
+
+Creating an EC2 Instance with an Auto scaling groups in order to connect to our static website in the presentation tier 
+
+Creating an EC2 Instance for the presentation tier
+
+**Create Launch template for presentation tier** (public facing)
+1. -- Launch template name and description
+2. -- Application and OS Images (Amazon Machine Image) — free-tier AMI
+3. -- Instance type (t.2 micro)
+-- Key pair (create a key pair and download to device)
+4. -- Network settings (create security group with name and description, select vpc, add Security group rule (Type: ssh Source: 0.0.0.0/0, add Security group rule (Type: http Source: 0.0.0.0/0))
+5. -- Advanced details (add script to use data for the static website)
+'''ruby
+#!/bin/bash
+sudo yum update -y
+sudo yum install -y httpd
+sudo systemctl start httpd
+sudo systemct enable httpd
+'''
+6. -- Create template 
+
+
+Creating an EC2 Instance for the application tier
+
+**Create Launch template for application tier** (private facing)
+1. -- Launch template name and description
+2. -- Application and OS Images (Amazon Machine Image) — free-tier AMI
+3. -- Instance type (t.2 micro)
+-- Key pair (create a key pair and download to device)
+4. -- Network settings (create security group with name and description, select vpc, add Security group rule (Type: ssh Source: nameofpresentationtiersecuritygroup)
+5. -- Create template 
+
+
+**Create Auto scaling groups** (to balance the load in the tiers)
+1. -- Name of presentation tier ASG
+2. -- Select launch template for presentation tier and the VPC (select both public subnets)
+3. -- Click Enable group metrics collection within CloudWatch
+4. -- Group size
+- Desired — 2
+- Minimum — 2
+- Maximum — 3
+5. -- Scaling Policies
+- Click Target tracking scaling policy
+- Target value — 80 and select Skip to Review
+
+You can create an ASG for the application tier but use the launch template for the application tier and the VPC (2 private subnets)
+
+
+##### Creating database tier
+Search and select RDS from the AWS console. From the left side of the screen, select Subnet groups and select Create DB Subnet group.
+
+**Subnet group details**
+- Name your subnet group and a description
+- Select your VPC you created earlier
+**Add Subnets**
+- Select your availability zones we used eariler(us-east-1a and us-east-1b)
+- Select the private db subnets we created eariler, and add the same CIDR we used and select Create
+
+Select Database and Create Database:
+- Choose a database creation method (Standard)
+- Engine options (Select My SQL)
+- Templates (Free tier)
+- Settings
+DB Cluster Identifier (privatedb)
+Master password (create a password) and confirm it
+- Storage
+uncheck Enable storage autoscaling
+- Connectivity
+Select the VPC we created eariler
+VPC Security group (select Create new)
+New VPC security group name ()
+Create database
+
+Now we will connect the Application tier and the Database tier. Once your database is created, select it and navigate to Connectivity & Security. Under security click on VPC Security Groups link. Select inbound rules along the bottom and Edit inbound rule. We will add rule to allow traffic from the application tier and delete the existing rule. In the port you will want to enter 3306 and our source will be the **nameoftheprivateappsecuritygroup** we created earlier.
+
+To check if we are set up correctly, ssh into one of my Public Web ec2 instances.
+First I pinged the Private App instance from my Public Web instance. I did this by running the command
+'''ruby 
+ping <private IP address of private app instance>
+'''
+
+Try to access the database from the Public Web instance
+'''ruby 
+ping <RDS_Endpoint>
+'''
