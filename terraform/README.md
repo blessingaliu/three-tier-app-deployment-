@@ -1,4 +1,4 @@
-## Create 3-tier architecture manually using terraform
+## Create 3-tier architecture using terraform
 
 ### What is Terraform and how does it work
 
