@@ -29,3 +29,23 @@ terraform validate
 terraform fmt
 terraform validate
 ```
+
+### Terraform cloud setup
+```ruby
+Sign into Terraform cloud account
+Navigate to workspaces
+Add variables (namespace and region)
+Add environment variables (AWS access ID and secret acess key)
+```
+
+### Terraform commands
+```ruby
+# query infrastructure provider to get current state
+terraform refresh
+# create an execution plan
+terraform plan
+# execute the plan 
+terraform apply
+# Destroy the resources/infrastructure
+terraform destroy
+```
