@@ -29,7 +29,3 @@ terraform validate
 terraform fmt
 terraform validate
 ```
-
-Step 1: 
-
-Step 2: 
